@@ -1,0 +1,13 @@
+http://127.0.0.1:8080 {
+    route /auth* {
+        auth_portal {
+            backends {
+                local_backend {
+                    method local
+                    path users.json
+                    realm local
+                }
+            }
+        }
+    }
+}
