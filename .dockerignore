@@ -1,0 +1,7 @@
+.git
+example
+Makefile
+.dockerignore
+README.md
+Dockerfile
+cmd/caddy/caddy

@@ -1,0 +1,33 @@
+# stack name: main
+
+version: '3.7'
+
+networks:
+
+  default:
+    # 不写这个的话只有 docker service 的容器才可以使用这个网络, 这样的话手动运行单个容器进行调试时会很麻烦
+    attachable: true
+
+  # 与其他 docker service stack 互通的网络
+  link:
+    attachable: true
+
+services:
+
+  proxy:
+    image: shynome/caddy2
+    networks: [ 'default', 'link' ]
+    ports:
+      # 这种写法可以获取来源 ip, 但限制是只能有一个这样的容器启动不然会端口冲突, 所以下面的 stop-frist 是必要的
+      - { mode: host, protocol: tcp, target: 80, published: 80 }
+      - { mode: host, protocol: tcp, target: 443, published: 443 }
+    volumes:
+      - $PWD/caddy:/etc/caddy/:rslave
+      - $PWD/caddy/data:/data/caddy/:rslave
+      - /var/run/docker.sock:/var/run/docker.sock:rslave
+    logging: &logging
+      options: { max-size: "200k", max-file: "10" }
+    deploy:  &deploy
+      replicas: 1
+      endpoint_mode: dnsrr
+      update_config: { parallelism: 0, failure_action: rollback, max_failure_ratio: 1, order: stop-first }

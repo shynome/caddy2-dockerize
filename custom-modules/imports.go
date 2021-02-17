@@ -10,6 +10,5 @@ import (
 	_ "github.com/caddy-dns/duckdns"
 	_ "github.com/caddy-dns/route53"
 	_ "github.com/caddy-dns/vultr"
-	_ "github.com/greenpau/caddy-auth-portal"
 	_ "github.com/shynome/caddy2-tmpdocker"
 )

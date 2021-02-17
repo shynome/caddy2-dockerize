@@ -2,10 +2,10 @@ ARG VERSION=2.3.0
 
 FROM golang:1.15-alpine as Build
 ARG VERSION
-RUN apk add --no-cache git
-RUN go get -u github.com/caddyserver/xcaddy/cmd/xcaddy
-RUN xcaddy build v${VERSION} \
-    --with github.com/caddy-dns/cloudflare
+RUN apk add --no-cache git build-base
+WORKDIR /app
+COPY . /app
+RUN cd cmd/caddy/ && go build -mod=vendor -o /tmp/caddy
 
 # copy from https://github.com/caddyserver/caddy-docker/blob/master/2.3/alpine/Dockerfile
 FROM alpine:3.12 as Base
@@ -18,9 +18,7 @@ RUN set -eux; \
 		/data/caddy \
 		/etc/caddy \
 		/usr/share/caddy \
-	; \
-	wget -O /etc/caddy/Caddyfile "https://github.com/caddyserver/dist/raw/56302336e0bb7c8c5dff34cbcb1d833791478226/config/Caddyfile"; \
-	wget -O /usr/share/caddy/index.html "https://github.com/caddyserver/dist/raw/56302336e0bb7c8c5dff34cbcb1d833791478226/welcome/index.html"
+	;
 
 # https://github.com/caddyserver/caddy/releases
 ENV CADDY_VERSION v${VERSION}
@@ -52,4 +50,4 @@ WORKDIR /srv
 
 CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
 
-COPY --from=Build /go/caddy /usr/bin/caddy
+COPY --from=Build /tmp/caddy /usr/bin/caddy

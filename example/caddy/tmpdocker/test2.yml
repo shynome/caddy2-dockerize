@@ -1,0 +1,24 @@
+# stack name: func
+
+version: '3.7'
+
+networks:
+
+  link:
+    external: true
+    name: main_link
+
+services:
+
+  test2:
+    # image sha256 is required. check image version from internet will spend much time
+    image: nginx:1.19.6-alpine@sha256:c2ce58e024275728b00a554ac25628af25c54782865b3487b11c21cafb7fabda
+    networks: [ 'link' ]
+    logging: &logging
+      options: { max-size: "200k", max-file: "10" }
+    deploy:  &deploy
+      replicas: 0
+      endpoint_mode: dnsrr
+      resources:
+        limits: { cpus: '0.50', memory: 50M }
+        reservations: { cpus: '0.25', memory: 20M }

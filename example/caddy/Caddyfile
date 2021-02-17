@@ -1,0 +1,8 @@
+(common) {
+    log {
+        level WARN
+    }
+}
+
+import *.conf
+import tmpdocker/*.conf
