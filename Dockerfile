@@ -1,8 +1,8 @@
-ARG VERSION=2.3.0
+ARG VERSION=2.4.3
 
-FROM golang:1.15-alpine as Build
-ARG VERSION
+FROM golang:1.16-alpine as Build
 RUN apk add --no-cache git build-base
+ARG VERSION
 WORKDIR /app
 COPY . /app
 RUN cd cmd/caddy/ && go build -mod=vendor -o /tmp/caddy
